@@ -1,30 +1,756 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1DB954">
-  <title>P3CODY — Soluções Inteligentes</title>
-  <!-- Estilo -->
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- Favicons -->
-  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Favicon principal -->
-  <link rel="icon" href="favicon-32x32.png" sizes="32x32"> <!-- Ícone 32x32 -->
-  <link rel="icon" href="favicon-16x16.png" sizes="16x16"> <!-- Ícone 16x16 -->
-  <link rel="apple-touch-icon" href="apple-touch-icon.png"> <!-- Ícone para dispositivos iOS -->
-  <meta name="theme-color" content="#1DB954"> <!-- Cor da barra de navegação no Chrome mobile -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P3cody — Soluções Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #00ff88;
+    --accent2: #7c3aed;
+    --accent3: #f97316;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code: #a78bfa;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.5;
+    transition: transform 0.25s ease, opacity 0.3s;
+  }
+
+  /* Grid overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent2); }
+
+  nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    margin-left: 2rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid rgba(0,255,136,0.3);
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+  h1 .highlight {
+    color: var(--accent);
+    position: relative;
+  }
+  h1 .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: lineIn 0.6s 0.9s ease forwards;
+  }
+  h1 .dim { color: var(--muted); }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 540px;
+    line-height: 1.7;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-code {
+    margin-top: 2.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--code);
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.25);
+    border-left: 3px solid var(--accent2);
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+  .hero-code .comment { color: var(--muted); }
+  .hero-code .kw { color: var(--accent); }
+  .hero-code .str { color: var(--accent3); }
+
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+
+  .btn-primary {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #000;
+    padding: 0.85rem 2rem;
+    border: none;
+    border-radius: 2px;
+    cursor: none;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,255,136,0.3);
+  }
+
+  .btn-ghost {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.85rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: none;
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  /* STATS */
+  .stats {
+    padding: 3rem;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+  .stat-num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  /* SECTION */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 3rem;
+    position: relative; z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 4rem;
+  }
+
+  /* CARDS */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .card {
+    background: var(--surface);
+    padding: 2rem;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--accent);
+    transition: height 0.3s ease;
+  }
+  .card:hover::before { height: 100%; }
+  .card:hover { background: #13131a; }
+
+  .card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.02em;
+  }
+  .card-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .card-tag {
+    margin-top: 1.2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* APPS SHOWCASE */
+  .apps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .app-card {
+    background: var(--surface);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+  .app-card:hover { background: #13131a; }
+
+  .app-card.featured {
+    grid-column: span 2;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .app-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+  .badge-live { background: rgba(0,255,136,0.1); color: var(--accent); border: 1px solid rgba(0,255,136,0.3); }
+  .badge-beta { background: rgba(249,115,22,0.1); color: var(--accent3); border: 1px solid rgba(249,115,22,0.3); }
+  .badge-dev { background: rgba(124,58,237,0.1); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+
+  .app-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  .app-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  .app-stack {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--code);
+    border: 1px solid rgba(167,139,250,0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+  }
+
+  .app-arrow {
+    position: absolute;
+    top: 2rem; right: 2rem;
+    color: var(--border);
+    font-size: 1.5rem;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .app-card:hover .app-arrow { color: var(--accent); transform: translate(3px,-3px); }
+
+  /* CONTACT */
+  .contact-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-box::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,255,136,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .contact-box h2 { margin-bottom: 0.5rem; }
+  .contact-sub { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; z-index: 1;
+  }
+  footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  footer a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  footer a:hover { color: var(--accent); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineIn {
+    to { transform: scaleX(1); }
+  }
+
+  /* Scrolled reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Floating accent blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--accent2); top: -200px; right: -100px; }
+  .blob-2 { width: 300px; height: 300px; background: var(--accent); bottom: 10%; left: -100px; }
+
+  @media (max-width: 768px) {
+    header { padding: 1rem 1.5rem; }
+    nav { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .stats { padding: 2rem 1.5rem; gap: 2rem; flex-wrap: wrap; }
+    section { padding: 4rem 1.5rem; }
+    .cards { grid-template-columns: 1fr; }
+    .apps-grid { grid-template-columns: 1fr; }
+    .app-card.featured { grid-column: span 1; }
+    .contact-box { flex-direction: column; padding: 2rem; align-items: flex-start; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <img src="logo.png" alt="logo P3CODY" class="logo">
-    <h1>Nosso site está em<br>desenvolvimento</h1>
-    <p>Soluções inteligentes em Python e automação.</p>
-    <a href="mailto:contato@p3cody.com.br" class="btn">contato@p3cody.com.br</a>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo">P3<span>cody</span></a>
+  <nav>
+    <a href="#solucoes">Soluções</a>
+    <a href="#apps">Apps</a>
+    <a href="#contato">Contato</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="tag">⬡ Python · Automação · ERP</span>
+  <h1>
+    Código que<br>
+    <span class="highlight">resolve</span><br>
+    <span class="dim">problemas reais.</span>
+  </h1>
+  <p class="hero-sub">
+    Soluções Python para automatizar processos, integrar sistemas e transformar rotinas manuais em aplicativos eficientes.
+  </p>
+  <div class="hero-code">
+    <div><span class="comment"># P3cody — do problema à solução</span></div>
+    <div><span class="kw">import</span> p3cody</div>
+    <div>&nbsp;</div>
+    <div>solucao = p3cody.<span class="kw">resolver</span>(<span class="str">"seu_problema"</span>)</div>
+    <div>solucao.<span class="kw">deploy</span>() <span class="comment">✓</span></div>
   </div>
-  <footer>
-    <p>© 2025 P3CODY — Todos os direitos reservados.<br>Desenvolvido por <strong>P3CODY </strong></p>
-  </footer>
+  <div class="hero-cta">
+    <a href="#apps" class="btn-primary">Ver Apps</a>
+    <a href="#contato" class="btn-ghost">Entre em contato</a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats reveal">
+  <div>
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Python</div>
+  </div>
+  <div>
+    <div class="stat-num">ERP</div>
+    <div class="stat-label">TOTVS RM</div>
+  </div>
+  <div>
+    <div class="stat-num">0→1</div>
+    <div class="stat-label">Ideia ao deploy</div>
+  </div>
+  <div>
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Possibilidades</div>
+  </div>
+</div>
+
+<!-- SOLUÇÕES -->
+<section id="solucoes">
+  <div class="reveal">
+    <div class="section-label">// o que construímos</div>
+    <h2>Soluções sob medida<br>para o seu negócio.</h2>
+    <p class="section-desc">Automatize processos, integre sistemas e resolva gargalos com aplicações Python focadas em resultado.</p>
+  </div>
+  <div class="cards reveal">
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">Automação de Processos</div>
+      <div class="card-desc">Scripts e robôs que eliminam tarefas manuais repetitivas e reduzem erros humanos.</div>
+      <div class="card-tag">→ Python · Selenium · Playwright</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <div class="card-title">Integração ERP</div>
+      <div class="card-desc">Extensões e integrações customizadas para TOTVS RM, manipulando DataSets e movimentações.</div>
+      <div class="card-tag">→ C# · TOTVS RM · SQL</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Dashboards & Relatórios</div>
+      <div class="card-desc">Painéis interativos para visualização de dados operacionais e financeiros em tempo real.</div>
+      <div class="card-tag">→ Streamlit · Plotly · Pandas</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <div class="card-title">Apps com IA</div>
+      <div class="card-desc">Aplicativos inteligentes com processamento de linguagem, análise de documentos e geração de conteúdo.</div>
+      <div class="card-tag">→ Claude API · OpenAI · LangChain</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📥</div>
+      <div class="card-title">Processamento de Dados</div>
+      <div class="card-desc">ETL, limpeza, transformação e exportação de dados entre sistemas heterogêneos.</div>
+      <div class="card-tag">→ Pandas · SQLAlchemy · Excel</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛠️</div>
+      <div class="card-title">Ferramentas Internas</div>
+      <div class="card-desc">Apps desktop e web para equipes, com interfaces amigáveis construídas sob demanda.</div>
+      <div class="card-tag">→ Tkinter · FastAPI · Streamlit</div>
+    </div>
+  </div>
+</section>
+
+<!-- APPS -->
+<section id="apps">
+  <div class="reveal">
+    <div class="section-label">// projetos em andamento</div>
+    <h2>Apps construídos<br>com propósito.</h2>
+    <p class="section-desc">Cada app resolve um problema específico — sem complexidade desnecessária.</p>
+  </div>
+  <div class="apps-grid reveal">
+
+    <div class="app-card featured">
+      <span class="app-badge badge-live">● Live</span>
+      <div class="app-name">Gerador de Relatórios ERP</div>
+      <div class="app-desc">Extrai dados do TOTVS RM, processa movimentações e gera relatórios Excel formatados automaticamente. Integração direta com banco de dados e lógica de negócio customizada via DataServer C#.</div>
+      <div class="app-stack">
+        <span class="pill">Python</span>
+        <span class="pill">TOTVS RM</span>
+        <span class="pill">C#</span>
+        <span class="pill">SQL Server</span>
+        <span class="pill">openpyxl</span>
+      </div>
+      <span class="app-arrow">↗</span>
+    </div>
+
+    <div class="app-card">
+      <span class="app-badge badge-beta">◈ Beta</span>
+      <div class="app-name">Leitor de NF-e</div>
+      <div class="app-desc">Parse automático de XMLs de notas fiscais, validação e importação para base de dados.</div>
+      <div class="app-stack">
+        <span class="pill">Python</span>
+        <span class="pill">lxml</span>
+        <span class="pill">SQLite</span>
+      </div>
+      <span class="app-arrow">↗</span>
+    </div>
+
+    <div class="app-card">
+      <span class="app-badge badge-dev">⬡ Dev</span>
+      <div class="app-name">Monitor de Tarefas</div>
+      <div class="app-desc">Dashboard para acompanhamento de ordens de serviço e movimentações em tempo real.</div>
+      <div class="app-stack">
+        <span class="pill">Streamlit</span>
+        <span class="pill">Pandas</span>
+        <span class="pill">Plotly</span>
+      </div>
+      <span class="app-arrow">↗</span>
+    </div>
+
+    <div class="app-card">
+      <span class="app-badge badge-dev">⬡ Dev</span>
+      <div class="app-name">AI Document Analyzer</div>
+      <div class="app-desc">Análise de documentos PDF com IA — extrai dados, classifica e organiza automaticamente.</div>
+      <div class="app-stack">
+        <span class="pill">Claude API</span>
+        <span class="pill">PyMuPDF</span>
+        <span class="pill">FastAPI</span>
+      </div>
+      <span class="app-arrow">↗</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contato">
+  <div class="contact-box reveal">
+    <div>
+      <div class="section-label">// vamos construir juntos</div>
+      <h2>Tem um problema<br>para resolver?</h2>
+      <p class="contact-sub">Descreva o desafio e construímos a solução certa em Python.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1rem;min-width:240px;">
+      <a href="mailto:contato@p3cody.com.br" class="btn-primary" style="text-align:center;">contato@p3cody.com.br</a>
+      <a href="https://github.com/p3cody" class="btn-ghost" style="text-align:center;">GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 P3cody — Todos os direitos reservados.</p>
+  <div style="display:flex;gap:2rem;">
+    <a href="#">GitHub</a>
+    <a href="#">LinkedIn</a>
+    <a href="#contato">Contato</a>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform += ' scale(1.8)';
+      ring.style.opacity = '0.9';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // Typewriter for hero tag
+  const tag = document.querySelector('.tag');
+  const original = tag.textContent;
+  tag.textContent = '';
+  let i = 0;
+  const type = () => {
+    if (i < original.length) {
+      tag.textContent += original[i++];
+      setTimeout(type, 40);
+    }
+  };
+  setTimeout(type, 500);
+</script>
 </body>
 </html>
+
 
