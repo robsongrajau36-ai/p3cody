@@ -191,7 +191,11 @@
   }
   $('#notifyForm').addEventListener('submit', e => {
     e.preventDefault();
-    showToast('Combinado — avisamos quando estiver no ar.');
+    const email = $('#notifyEmail').value.trim();
+    const subject = encodeURIComponent('Avisar quando o site estiver no ar');
+    const body = encodeURIComponent(`Quero ser avisado quando o site da P3cody estiver no ar.\n\nMeu e-mail: ${email}`);
+    window.location.href = `mailto:contato@p3cody.com.br?subject=${subject}&body=${body}`;
+    showToast('Abrindo seu app de e-mail para confirmar o envio…');
     e.target.reset();
   });
 </script>
